@@ -28,11 +28,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Route files
 const authRoutes = require('./routes/auth.routes');
-// Add more route imports here when ready (e.g., userRoutes, methodRoutes)
+const userRoutes = require('./routes/user.routes');
 
 // Use routes
 app.use('/api/auth', authRoutes);
-// Example: app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes); 
 
 // Root route
 app.get('/', (req, res) => {

@@ -24,7 +24,7 @@ const registerService = async ({ name, email, password }, session) => {
 
 // LOGIN
 const loginService = async ({ email, password }) => {
-  const user = await findUserByEmail(email);
+  const user = await findUserByEmail(email.toLowerCase()); // 🔥 FIXED HERE
   if (!user) throw new Error('Invalid email or password.');
 
   const isMatch = await comparePassword(password, user.password);
@@ -33,6 +33,7 @@ const loginService = async ({ email, password }) => {
   const token = generateToken(user._id, user.role);
   return { token, user };
 };
+
 
 // FORGOT PASSWORD
 const forgotPasswordService = async (email) => {

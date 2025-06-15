@@ -11,6 +11,13 @@ const comparePassword = async (plainPassword, hashedPassword) => {
   return await bcrypt.compare(plainPassword, hashedPassword);
 };
 
+
+(async () => {
+  const password = 'Admin@123';
+  const hashed = await bcrypt.hash(password, 10);
+  console.log('Hashed Password:', hashed);
+})();
+
 module.exports = {
   hashPassword,
   comparePassword

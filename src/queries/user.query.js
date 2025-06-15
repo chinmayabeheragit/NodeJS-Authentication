@@ -30,11 +30,15 @@ const addResetToken = async (email, token, expiry) => {
   );
 };
 
+const findAllUsers = async () => await User.find().select('-password');
+
+
 module.exports = {
   createUser,
   findUserByEmail,
   findUserById,
   updateUser,
   addResetToken,
-  findByResetToken
+  findByResetToken,
+  findAllUsers
 };
