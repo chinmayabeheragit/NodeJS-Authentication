@@ -1,80 +1,48 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Link } from "react-router-dom";
+import { FaGoogle } from "react-icons/fa";
 
-const LoginPage = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: '', password: '' });
-
-  const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, formData);
-      localStorage.setItem('token', res.data.token);
-      alert('Login successful!');
-      navigate('/');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Login failed!');
-    }
-  };
-
+export default function LoginPage() {
   const handleGoogleLogin = () => {
-    window.open(`${import.meta.env.VITE_BACKEND_URL}/api/auth/google`, "_self");
+    window.location.href = "https://your-backend-url/api/auth/google";
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-700 p-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 space-y-6">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Welcome Back</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Login to your account</h2>
+        <form>
           <input
             type="email"
-            name="email"
             placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="password"
-            name="password"
             placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <button type="submit" className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            Sign In
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
+            Login
           </button>
         </form>
-
-        <div className="flex items-center justify-center">
-          <span className="text-gray-500 text-sm">OR</span>
-        </div>
-
+        <div className="my-4 text-center text-gray-500">or</div>
         <button
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center space-x-2 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+          className="w-full flex items-center justify-center border border-gray-300 py-2 rounded hover:bg-gray-100"
         >
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-          <span>Continue with Google</span>
+          <FaGoogle className="mr-2 text-red-500" />
+          Continue with Google
         </button>
-
-        <p className="text-sm text-center text-gray-600">
-          Don’t have an account?{' '}
-          <span className="text-blue-600 hover:underline cursor-pointer" onClick={() => navigate('/register')}>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
             Register
-          </span>
+          </Link>
         </p>
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}

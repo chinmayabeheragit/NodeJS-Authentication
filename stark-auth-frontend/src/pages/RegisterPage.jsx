@@ -1,72 +1,53 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Link } from "react-router-dom";
+import { FaGoogle } from "react-icons/fa";
 
-const RegisterPage = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
-
-  const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, formData);
-      alert('Registration successful!');
-      navigate('/login');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Registration failed!');
-    }
+export default function RegisterPage() {
+  const handleGoogleLogin = () => {
+    window.location.href = "https://your-backend-url/api/auth/google";
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-purple-800 to-indigo-800 p-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-xl p-8 space-y-6">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Create Account</h2>
-        <form onSubmit={handleRegister} className="space-y-4">
+    <div className="flex justify-center items-center h-screen bg-gray-50">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create an account</h2>
+        <form>
           <input
             type="text"
-            name="name"
             placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="email"
-            name="email"
             placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="password"
-            name="password"
             placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <button type="submit" className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
             Register
           </button>
         </form>
-
-        <p className="text-sm text-center text-gray-600">
-          Already have an account?{' '}
-          <span className="text-indigo-600 hover:underline cursor-pointer" onClick={() => navigate('/login')}>
+        <div className="my-4 text-center text-gray-500">or</div>
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center border border-gray-300 py-2 rounded hover:bg-gray-100"
+        >
+          <FaGoogle className="mr-2 text-red-500" />
+          Sign up with Google
+        </button>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
             Login
-          </span>
+          </Link>
         </p>
       </div>
     </div>
   );
-};
-
-export default RegisterPage;
+}
