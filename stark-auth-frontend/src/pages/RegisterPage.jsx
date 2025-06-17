@@ -1,52 +1,47 @@
-import { Link } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+import { FaGoogle } from 'react-icons/fa';
 
 export default function RegisterPage() {
-  const handleGoogleLogin = () => {
-    window.location.href = "https://your-backend-url/api/auth/google";
+  const nav = useNavigate();
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleRegister = async e => {
+    e.preventDefault();
+    try {
+      await axios.post('/register', form);
+      alert('Registered! You can login now.');
+      nav('/login');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Register failed');
+    }
+  };
+
+  const googleLogin = () => {
+    window.open(`${import.meta.env.VITE_BACKEND_URL}/api/auth/google`, '_self');
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-50">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create an account</h2>
-        <form>
-          <input
-            type="text"
-            placeholder="Full Name"
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          >
-            Register
-          </button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="bg-white p-8 rounded shadow max-w-md w-full">
+        <h2 className="text-2xl font-semibold mb-4 text-center">Register</h2>
+        <form onSubmit={handleRegister} className="flex flex-col space-y-3">
+          <input name="name" type="text" placeholder="Full Name" value={form.name} onChange={handleChange} />
+          <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} />
+          <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} />
+          <button type="submit" className="bg-blue-600 text-white py-2 rounded">Register</button>
         </form>
-        <div className="my-4 text-center text-gray-500">or</div>
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center border border-gray-300 py-2 rounded hover:bg-gray-100"
-        >
-          <FaGoogle className="mr-2 text-red-500" />
-          Sign up with Google
+        <div className="text-center my-2">OR</div>
+        <button onClick={googleLogin} className="flex justify-center items-center border py-2 rounded">
+          <FaGoogle className="mr-2 text-red-500" /> Continue with Google
         </button>
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Login
-          </Link>
-        </p>
+        <div className="mt-4 text-center text-sm">
+          <span>Already have an account? </span>
+          <button onClick={() => nav('/login')} className="text-blue-600">Login</button>
+        </div>
       </div>
     </div>
   );

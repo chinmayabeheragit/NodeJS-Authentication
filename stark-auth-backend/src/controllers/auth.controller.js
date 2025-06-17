@@ -18,6 +18,7 @@ const register = async (req, res) => {
 
     res.status(201).json({ success: true, user });
   } catch (error) {
+    console.log(error)
     await session.abortTransaction();
     session.endSession();
 

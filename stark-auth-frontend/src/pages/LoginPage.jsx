@@ -1,47 +1,58 @@
-import { Link } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+import { FaGoogle } from 'react-icons/fa';
+import {jwtDecode} from 'jwt-decode'; // ✅ FIXED: default import
 
 export default function LoginPage() {
-  const handleGoogleLogin = () => {
-    window.location.href = "https://your-backend-url/api/auth/google";
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: '', password: '' });
+
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleLogin = async e => {
+  e.preventDefault();
+  try {
+    const res = await axios.post('/auth/login', form);
+    const token = res.data.token;
+    localStorage.setItem('token', token);
+
+    const decoded = jwtDecode(token);
+    const userId = decoded._id || decoded.id;
+
+    // ✅ Conditional Redirect Based on Role
+    if (decoded.role === 'admin') {
+      nav(`/admin/${userId}`);
+    } else {
+      nav(`/profile/${userId}`);
+    }
+  } catch (err) {
+    alert(err.response?.data?.message || 'Login failed');
+  }
+};
+
+
+  const googleLogin = () => {
+    window.open(`${import.meta.env.VITE_BACKEND_URL}/api/auth/google`, '_self');
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Login to your account</h2>
-        <form>
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          >
-            Login
-          </button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded shadow max-w-md w-full">
+        <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
+        <form onSubmit={handleLogin} className="flex flex-col space-y-3">
+          <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} />
+          <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} />
+          <button type="submit" className="bg-blue-600 text-white py-2 rounded">Login</button>
         </form>
-        <div className="my-4 text-center text-gray-500">or</div>
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center border border-gray-300 py-2 rounded hover:bg-gray-100"
-        >
-          <FaGoogle className="mr-2 text-red-500" />
-          Continue with Google
+        <div className="text-center my-2">OR</div>
+        <button onClick={googleLogin} className="flex justify-center items-center border py-2 rounded">
+          <FaGoogle className="mr-2 text-red-500" /> Continue with Google
         </button>
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Register
-          </Link>
-        </p>
+        <div className="mt-4 flex justify-between text-sm">
+          <Link to="/forgot-password" className="text-blue-600">Forgot Password?</Link>
+          <Link to="/register" className="text-blue-600">Register</Link>
+        </div>
       </div>
     </div>
   );

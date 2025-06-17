@@ -1,28 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
 
-const GoogleSuccessPage = () => {
-  const navigate = useNavigate();
-  const [hasHandled, setHasHandled] = useState(false);
+export default function GoogleSuccessPage() {
+  const nav = useNavigate();
 
   useEffect(() => {
-    if (hasHandled) return; // Prevent re-execution
-    setHasHandled(true);
-
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
 
     if (token) {
-      localStorage.setItem("token", token);
-      alert('Google login successful!');
-      navigate('/');
+      localStorage.setItem('token', token);
+      const decoded = jwtDecode(token);
+      const userId = decoded.id || decoded._id;
+      nav(`/profile/${userId}`);
     } else {
-      alert('Login failed or token missing.');
-      navigate('/login');
+      nav('/login');
     }
-  }, [navigate, hasHandled]);
+  }, [nav]);
 
   return <div>Redirecting...</div>;
-};
-
-export default GoogleSuccessPage;
+}
